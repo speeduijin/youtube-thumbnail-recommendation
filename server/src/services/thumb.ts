@@ -1,0 +1,15 @@
+import { FieldPacket } from 'mysql2/promise';
+import promisePool from '../config/db';
+import Thumb from '../types/thumb';
+
+const random = async () => {
+  const query = `SELECT * FROM thumbnails ORDER BY RAND() LIMIT 16`;
+
+  const [rows]: [Thumb[], FieldPacket[]] = await promisePool.execute(query);
+
+  return rows;
+};
+
+const select = async () => {};
+
+export { random, select };

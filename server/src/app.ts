@@ -9,6 +9,7 @@ import session from 'express-session';
 
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
+import thumbRouter from './routes/thumb';
 import { notFoundHandler, errorHandler } from './utils/errorHandler';
 import passportConfig from './config/passport';
 import logger from './config/logger';
@@ -61,6 +62,7 @@ app.use(passport.session());
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
+app.use('/thumb', thumbRouter);
 
 if (isProduction) {
   app.get('*', (req, res) =>

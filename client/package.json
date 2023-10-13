@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@fxts/core": "^0.21.0",
     "axios": "^1.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

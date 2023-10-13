@@ -1,13 +1,18 @@
 import express from 'express';
-import { join, login, logout } from '../controllers/auth';
-import { isLoggedIn, isNotLoggedIn } from '../utils/authMiddleware';
+import { join, login, logout, isNotLoggedIn } from '../controllers/auth';
+import {
+  isLoggedIn as mIsLoggedIn,
+  isNotLoggedIn as mIsNotLoggedIn,
+} from '../utils/authMiddleware';
 
 const router = express.Router();
 
-router.post('/join', isNotLoggedIn, join);
+router.post('/join', mIsNotLoggedIn, join);
 
-router.post('/login', isNotLoggedIn, login);
+router.post('/login', mIsNotLoggedIn, login);
 
-router.get('/logout', isLoggedIn, logout);
+router.get('/logout', mIsLoggedIn, logout);
+
+router.get('/isnotloggedin', isNotLoggedIn);
 
 export default router;

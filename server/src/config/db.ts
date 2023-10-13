@@ -1,11 +1,20 @@
-import { createPool } from 'mysql2';
+import { createPool } from 'mysql2/promise';
 import configObj from './config';
+import logger from './logger';
 
-const { db } = configObj;
 const env = (process.env.NODE_ENV as 'production' | 'test') || 'development';
-const config = db[env];
+const config = configObj[env];
 
-const pool = createPool(config);
-const promisePool = pool.promise();
+const promisePool = createPool(config);
 
-export { pool, promisePool };
+(async () => {
+  try {
+    const connection = await promisePool.getConnection();
+    connection.release();
+    logger.info('✅ Connected to DB');
+  } catch (error) {
+    logger.error('❌ DB Error', error);
+  }
+})();
+
+export default promisePool;

@@ -1,6 +1,6 @@
 import { RequestHandler, ErrorRequestHandler } from 'express';
 import createHttpError from 'http-errors';
-import logger from './config/logger';
+import logger from '../config/logger';
 
 export const notFoundHandler: RequestHandler = (req, res, next) => {
   const error = createHttpError(

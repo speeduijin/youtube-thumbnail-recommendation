@@ -4,53 +4,51 @@ import stripAnsi from 'strip-ansi';
 import path from 'path';
 
 const {
-  combine,
-  printf,
-  label: labelFormat,
-  timestamp: timestampFormat,
   colorize,
-  simple,
+  combine,
+  label: fLabel,
+  printf,
+  timestamp: fTimestamp,
 } = format;
 
-const logDir = path.join(process.cwd(), '/logs');
+const logPath = path.join(process.cwd(), '/logs');
 
-const fileFormat = printf(
-  ({ level, message, label, timestamp }) =>
-    `${timestamp} [${label}] ${level}: ${stripAnsi(message)}`,
+const fileLogFormat = combine(
+  fLabel({ label: 'youtube-thumbnail-recommendation' }),
+  fTimestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
+  printf(
+    ({ label, level, message, timestamp }) =>
+      `${timestamp} [${label}] ${level}: ${stripAnsi(message)}`,
+  ),
 );
 
-const loggerFormat = combine(
-  labelFormat({ label: 'express-boilerplate' }),
-  timestampFormat({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-  fileFormat,
-);
+const fileTransport = (lev: string) =>
+  new DailyRotateFile({
+    level: lev,
+    filename: `%DATE%-${lev}.log`,
+    dirname: lev === 'info' ? logPath : `${logPath}/${lev}`,
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '30d',
+  });
 
-const commonTransportOptions = {
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '30d',
-};
-
-const errorTransport = new DailyRotateFile({
-  level: 'error',
-  filename: `%DATE%-error.log`,
-  dirname: `${logDir}/error`,
-  ...commonTransportOptions,
-});
-
-const infoTransport = new DailyRotateFile({
-  level: 'info',
-  filename: `%DATE%.log`,
-  dirname: logDir,
-  ...commonTransportOptions,
+const consoleTransport = new transports.Console({
+  format: combine(
+    colorize(),
+    fTimestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
+    printf(({ level, message, stack, timestamp }) =>
+      stack
+        ? `${level}: ${message} {${timestamp}}\n${stack}`
+        : `${level}: ${message} {${timestamp}}`,
+    ),
+  ),
 });
 
 const logger = createLogger({
-  format: loggerFormat,
-  transports: [errorTransport, infoTransport],
+  format: fileLogFormat,
+  transports: [fileTransport('error'), fileTransport('info')],
 });
 
-if (process.env.NODE_ENV !== 'production')
-  logger.add(new transports.Console({ format: combine(colorize(), simple()) }));
+if (process.env.NODE_ENV !== 'production') logger.add(consoleTransport);
 
 export default logger;

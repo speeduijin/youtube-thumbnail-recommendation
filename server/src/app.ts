@@ -1,19 +1,23 @@
 import express from 'express';
-import session from 'express-session';
-import cookieParser from 'cookie-parser';
 import compression from 'compression';
-import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import morgan from 'morgan';
+import passport from 'passport';
+import session from 'express-session';
 
-import { notFoundHandler, errorHandler } from './middlewares';
+import authRouter from './routes/auth';
+import { notFoundHandler, errorHandler } from './utils/errorHandler';
+import passportConfig from './config/passport';
 import logger from './config/logger';
 
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
+passportConfig();
+
 if (isProduction) {
   app.enable('trust proxy');
-
   app.use(
     helmet({
       // contentSecurityPolicy: false,
@@ -31,22 +35,27 @@ app.use(
     },
   }),
 );
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // extended - 객체로 변환
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 app.use(compression());
+app.use(cookieParser());
 app.use(
   session({
-    secret: process.env.COOKIE_SECRET!, // !: Non-Null
+    secret: process.env.COOKIE_SECRET!,
     resave: false,
     saveUninitialized: false,
-    proxy: isProduction, // true - nginx, apache...
+    proxy: isProduction,
     cookie: {
       httpOnly: true,
-      secure: isProduction, // true - https
+      secure: isProduction,
     },
   }),
 );
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/auth', authRouter);
 
 app.get('/', (req, res) => {
   res.send('hello world');

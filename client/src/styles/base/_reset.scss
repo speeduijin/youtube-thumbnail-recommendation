@@ -5,15 +5,20 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* html {
-  font-family: ;
-  font-size: ;
-} */
+html {
+  /* font-family:; */
+  color: #fff;
+  background-color: #030303;
+}
 
-/* body {
-  font-family: ;
-  color: ;
-} */
+body {
+  max-width: 768px;
+  margin: auto;
+
+  /* font-family:; */
+  color: #fff;
+  background-color: #030303;
+}
 
 h1 {
   margin: 0;

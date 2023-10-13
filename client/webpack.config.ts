@@ -12,7 +12,6 @@ interface Configuration extends WebpackConfiguration {
 }
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-// const isDevelopment = false;
 
 const config: Configuration = {
   mode: isDevelopment ? 'development' : 'production',
@@ -24,9 +23,11 @@ const config: Configuration = {
 
   output: {
     filename: 'main.[chunkhash].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(
+      __dirname,
+      '../youtube-thumbnail-recommendation/server/client',
+    ),
     pathinfo: isDevelopment,
-    // publicPath: '/dist/',
     clean: true,
   },
   module: {
@@ -60,7 +61,7 @@ const config: Configuration = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
+      filename: isDevelopment ? '[name].css' : '[name].[contenthash].css',
     }),
     new HtmlWebpackPlugin({
       template: 'public/index.html',
@@ -73,13 +74,13 @@ const config: Configuration = {
     historyApiFallback: true,
     open: true,
     port: 8080,
-    // static: { directory: path.resolve(__dirname, 'dist') },
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://localhost:3000',
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: [
+      {
+        context: ['/auth', '/user'],
+        target: 'http://localhost:3000',
+      },
+    ],
   },
 };
+
 export default config;

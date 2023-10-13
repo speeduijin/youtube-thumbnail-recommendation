@@ -1,10 +1,13 @@
 import React from 'react';
+import { Outlet, useOutletContext } from 'react-router-dom';
 
 const Root = () => {
+  const isLoggedInData = useOutletContext() as boolean;
+
   return (
-    <div>
-      <h1>Hello world!</h1>
-    </div>
+    <>
+      <Outlet context={isLoggedInData} />
+    </>
   );
 };
 

@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -57,9 +58,11 @@ app.use(passport.session());
 
 app.use('/auth', authRouter);
 
-app.get('/', (req, res) => {
-  res.send('hello world');
-});
+if (isProduction) {
+  app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '../client', 'index.html')),
+  );
+}
 
 app.use(notFoundHandler);
 app.use(errorHandler);

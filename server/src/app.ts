@@ -8,6 +8,7 @@ import passport from 'passport';
 import session from 'express-session';
 
 import authRouter from './routes/auth';
+import userRouter from './routes/user';
 import { notFoundHandler, errorHandler } from './utils/errorHandler';
 import passportConfig from './config/passport';
 import logger from './config/logger';
@@ -37,6 +38,7 @@ app.use(
   }),
 );
 
+if (isProduction) app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
@@ -57,6 +59,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRouter);
+app.use('/user', userRouter);
 
 if (isProduction) {
   app.get('*', (req, res) =>

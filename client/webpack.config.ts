@@ -76,7 +76,7 @@ const config: Configuration = {
     port: 8080,
     proxy: [
       {
-        context: ['/auth', '/user'],
+        context: ['/auth', '/user', '/thumb'],
         target: 'http://localhost:3000',
       },
     ],

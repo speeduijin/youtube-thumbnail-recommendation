@@ -10,10 +10,11 @@ import Default, { userLoader } from './layouts/Default';
 import Root from './routes/Root';
 import Join from './routes/Join';
 import Login from './routes/Login';
-import { isNotLoggedIn } from './loaders/auth';
+import ThumbSelector, { thumbLoader } from './components/ThumbSelector';
 import Error from './components/Error';
-import './styles/main.scss';
+import { isNotLoggedIn } from './loaders/auth';
 
+import './styles/main.scss';
 const rootElement = document.getElementById('root') as HTMLElement;
 const root = createRoot(rootElement);
 
@@ -26,6 +27,9 @@ const router = createBrowserRouter([
         path: '/',
         element: <Root />,
         errorElement: <Error />,
+        children: [
+          { index: true, element: <ThumbSelector />, loader: thumbLoader },
+        ],
       },
     ],
   },

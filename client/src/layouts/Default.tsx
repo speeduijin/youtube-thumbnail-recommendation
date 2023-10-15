@@ -44,7 +44,7 @@ const Default = () => {
     <>
       <GlobalHeader isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <main>
-        <Outlet />
+        <Outlet context={userData} />
       </main>
     </>
   );

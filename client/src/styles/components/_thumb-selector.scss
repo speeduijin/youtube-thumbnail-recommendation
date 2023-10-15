@@ -1,0 +1,53 @@
+.thumb-selector {
+  h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .thumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .thumb-item {
+    position: relative;
+    cursor: pointer;
+    border: 2px solid #ddd;
+    width: calc(50% - 5px);
+    transition: border-color 0.3s;
+
+    img {
+      width: 100%;
+      height: 100%; /* 이미지의 높이를 100%로 설정하여 이미지의 전체가 표시됩니다. */
+      object-fit: cover;
+    }
+
+    input[type='checkbox'] {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      visibility: hidden;
+    }
+
+    input[type='checkbox']:checked + img {
+      border: 2px solid #007bff;
+    }
+  }
+
+  button {
+    margin-top: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}

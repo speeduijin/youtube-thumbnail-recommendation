@@ -3,24 +3,23 @@ import { FieldPacket } from 'mysql2/promise';
 import promisePool from '../db';
 import local from './localStrategy';
 import User from '../../types/user';
-import logger from '../logger';
 
 export default () => {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
 
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser(async (id: number, done) => {
     try {
       const [rows]: [User[], FieldPacket[]] = await promisePool.execute(
-        'SELECT * FROM users WHERE id = ? LIMIT 1;',
+        'SELECT * FROM users WHERE id = ?;',
         [id],
       );
       const user = rows[0];
 
       done(null, user);
-    } catch (error) {
-      logger.error(error);
+    } catch (err) {
+      done(err);
     }
   });
 

@@ -11,8 +11,6 @@ const {
   timestamp: fTimestamp,
 } = format;
 
-const logPath = path.join(process.cwd(), '/logs');
-
 const fileLogFormat = combine(
   fLabel({ label: 'youtube-thumbnail-recommendation' }),
   fTimestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
@@ -21,6 +19,8 @@ const fileLogFormat = combine(
       `${timestamp} [${label}] ${level}: ${stripAnsi(message)}`,
   ),
 );
+
+const logPath = path.join(process.cwd(), '/logs');
 
 const fileTransport = (lev: string) =>
   new DailyRotateFile({

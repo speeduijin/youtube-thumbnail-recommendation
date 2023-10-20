@@ -2,9 +2,8 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { FieldPacket } from 'mysql2/promise';
 import bcrypt from 'bcrypt';
-import { isValidEmail, isValidPassword } from '../../utils/validation';
 import promisePool from '../db';
-import logger from '../logger';
+import { isInvalidEmail, isInvalidPassword } from '../../utils/validation';
 import User from '../../types/user';
 
 export default () => {
@@ -16,31 +15,32 @@ export default () => {
       },
       async (email, password, done) => {
         try {
-          if (!isValidEmail(email))
+          if (isInvalidEmail(email))
             return done(null, false, { message: 'invalidEmail' });
 
-          if (!isValidPassword(password))
+          if (isInvalidPassword(password))
             return done(null, false, { message: 'invalidPassword' });
 
           const [rows]: [User[], FieldPacket[]] = await promisePool.execute(
-            'SELECT * FROM users WHERE email = ?',
+            'SELECT * FROM users WHERE email = ? Limit 1;',
             [email],
           );
-
           const exUser = rows[0];
 
           if (exUser) {
-            const result = await bcrypt.compare(password, exUser.password);
+            const isCorrectPassword = await bcrypt.compare(
+              password,
+              exUser.password,
+            );
 
-            if (result) return done(null, exUser);
+            if (isCorrectPassword) return done(null, exUser);
 
             return done(null, false, { message: 'incorrectPassword' });
           }
 
           return done(null, false, { message: 'noUser' });
-        } catch (error) {
-          logger.error(error);
-          return done(error);
+        } catch (err) {
+          return done(err);
         }
       },
     ),

@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { random as randomService } from '../services/thumb';
+import randomService from '../services/thumb';
 
 const random: RequestHandler = async (req, res, next) => {
   try {
@@ -11,6 +11,4 @@ const random: RequestHandler = async (req, res, next) => {
   }
 };
 
-const select: RequestHandler = (req, res) => {};
-
-export { random, select };
+export default random;

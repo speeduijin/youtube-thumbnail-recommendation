@@ -10,6 +10,4 @@ const random = async () => {
   return rows;
 };
 
-const select = async () => {};
-
-export { random, select };
+export default random;

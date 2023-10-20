@@ -1,8 +1,11 @@
 import express from 'express';
-import getInfo from '../controllers/user';
+import { select, recommendation } from '../controllers/user';
+import { isLoggedIn } from '../utils/authMiddleware';
 
 const router = express.Router();
 
-router.get('/info', getInfo);
+router.post('/select', isLoggedIn, select);
+
+router.get('/recommendation', isLoggedIn, recommendation);
 
 export default router;

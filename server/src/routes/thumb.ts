@@ -1,5 +1,5 @@
 import express from 'express';
-import { random } from '../controllers/thumb';
+import random from '../controllers/thumb';
 
 const router = express.Router();
 

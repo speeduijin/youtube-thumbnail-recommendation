@@ -1,8 +1,7 @@
 import { RequestHandler } from 'express';
 import { FieldPacket } from 'mysql2/promise';
-import { pipe, map, filter, toArray, each, includes } from '@fxts/core';
 import promisePool from '../config/db';
-import SelectedThumbs from '../types/selectedThumbs';
+import { select as serviceSelect } from '../services/user';
 import Thumb from '../types/thumb';
 
 const select: RequestHandler = async (req, res, next) => {
@@ -11,94 +10,7 @@ const select: RequestHandler = async (req, res, next) => {
     const userId = user?.id;
     const { selectedThumbIds, unselectedThumbIds } = req.body;
 
-    const [exSelectedThumbs]: [SelectedThumbs[], FieldPacket[]] =
-      await promisePool.execute(
-        'SELECT * FROM selected_thumbs WHERE user_id = ?',
-        [userId],
-      );
-
-    const exSelectedThumbIds: SelectedThumbs['thumb_id'][] = await pipe(
-      exSelectedThumbs,
-      map((t: SelectedThumbs) => t.thumb_id),
-      toArray,
-    );
-
-    const exUnselectedThumbIds: SelectedThumbs['thumb_id'][] = await pipe(
-      exSelectedThumbs,
-      filter((t) => t.score !== 1),
-      filter((t) => includes(t.thumb_id, unselectedThumbIds)),
-      map((t: SelectedThumbs) => t.thumb_id),
-      toArray,
-    );
-
-    const mExThumbId = async (id: SelectedThumbs['thumb_id']) =>
-      promisePool.execute(
-        'UPDATE selected_thumbs SET score = score - 1 WHERE user_id = ? AND thumb_id = ?;',
-        [userId, id],
-      );
-
-    each(mExThumbId, exUnselectedThumbIds);
-
-    const exOneUnselectedThumbIds: SelectedThumbs['thumb_id'][] = await pipe(
-      exSelectedThumbs,
-      filter((t) => t.score === 1),
-      filter((t) => includes(t.thumb_id, unselectedThumbIds)),
-      map((t: SelectedThumbs) => t.thumb_id),
-      toArray,
-    );
-
-    const delThumbId = (id: SelectedThumbs['thumb_id']) =>
-      promisePool.execute(
-        'DELETE FROM selected_thumbs WHERE user_id = ? AND thumb_id = ?;',
-        [userId, id],
-      );
-
-    each(delThumbId, exOneUnselectedThumbIds);
-
-    const exFiveSelectedThumbIds: SelectedThumbs['thumb_id'][] = await pipe(
-      exSelectedThumbs,
-      filter((t) => t.score !== 5),
-      map((t: SelectedThumbs) => t.thumb_id),
-      toArray,
-    );
-
-    console.log(exFiveSelectedThumbIds);
-
-    const newThumbIds: SelectedThumbs['thumb_id'][] = pipe(
-      selectedThumbIds,
-      filter(
-        (id: SelectedThumbs['thumb_id']) => !includes(id, exSelectedThumbIds),
-      ),
-      toArray,
-    );
-
-    const addNewThumbId = (id: SelectedThumbs['thumb_id']) =>
-      promisePool.execute(
-        'INSERT INTO selected_thumbs (user_id, thumb_id) VALUES (?, ?);',
-        [userId, id],
-      );
-
-    each(addNewThumbId, newThumbIds);
-
-    const exNotFiveSelectedThumbIds: SelectedThumbs['thumb_id'][] = pipe(
-      selectedThumbIds,
-      filter((id: SelectedThumbs['thumb_id']) =>
-        includes(id, exFiveSelectedThumbIds),
-      ),
-
-      toArray,
-    );
-
-    console.log('selectedThumbIds', selectedThumbIds);
-    console.log('exNotFiveSelectedThumbIds', exNotFiveSelectedThumbIds);
-
-    const UpdateExThumbId = async (id: SelectedThumbs['thumb_id']) =>
-      promisePool.execute(
-        'UPDATE selected_thumbs SET score = score + 1 WHERE user_id = ? AND thumb_id = ?;',
-        [userId, id],
-      );
-
-    each(UpdateExThumbId, exNotFiveSelectedThumbIds);
+    await serviceSelect(userId, selectedThumbIds, unselectedThumbIds);
   } catch (error) {
     next(error);
   }

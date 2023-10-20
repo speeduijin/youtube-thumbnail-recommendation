@@ -1,12 +1,10 @@
 import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
 
 interface P {
-  isLoggedIn: boolean;
   handleLogout: () => Promise<void>;
 }
 
-const GlobalHeader: FC<P> = ({ isLoggedIn, handleLogout }) => {
+const GlobalHeader: FC<P> = ({ handleLogout }) => {
   return (
     <header className="global-header">
       <div className="button-group">

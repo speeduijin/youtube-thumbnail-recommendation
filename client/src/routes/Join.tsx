@@ -1,15 +1,13 @@
+import React, { ChangeEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 
 function Join() {
-  const [joinData, setJoinData] = useState({
-    email: '',
-    password: '',
-  });
+  const [joinData, setJoinData] = useState({ email: '', password: '' });
   const [passwordCheck, setPasswordCheck] = useState('');
   const [mismatchError, setMismatchError] = useState(false);
-  const [isJoinedIn, setIsJoinedIn] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,11 +24,11 @@ function Join() {
     e.preventDefault();
 
     try {
-      const res = await axios.post('/auth/join', {
+      await axios.post('/auth/join', {
         email: joinData.email,
         password: joinData.password,
       });
-      setIsJoinedIn(true);
+      navigate('/login');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message: string = error.response?.data.message;
@@ -38,8 +36,6 @@ function Join() {
       }
     }
   };
-
-  if (isJoinedIn) return <Navigate to="/login" />;
 
   return (
     <div className="join-wrapper">

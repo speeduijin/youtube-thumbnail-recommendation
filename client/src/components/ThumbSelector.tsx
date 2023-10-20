@@ -1,32 +1,38 @@
-import React, { useState, ChangeEvent } from 'react';
-import { useLoaderData, useOutletContext } from 'react-router-dom';
+import React, { useState, ChangeEvent, FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Thumb from '../types/thumb';
-import User from '../types/user';
 
-export const thumbLoader = async () => {
+interface P {
+  thumbsData: Thumb[];
+}
+
+export const thumbsLoader = async () => {
   try {
-    const response = await axios.get<Thumb[]>('/thumb/random');
-    return response.data;
+    const res = await axios.get<Thumb[]>('/thumb/random');
+    return res.data;
   } catch (error) {
     throw new Response();
   }
 };
 
-const ThumbSelector = () => {
-  const thumbData = useLoaderData() as Thumb[];
+const ThumbSelector: FC<P> = ({ thumbsData }) => {
+  const [selectedThumbIds, setSelectedThumbIds] = useState<number[]>([]);
+  const [unselectedThumbIds, setUnselectedThumbIds] = useState<number[]>(
+    thumbsData.map((thumb) => thumb.id),
+  );
 
-  const userData = useOutletContext() as User;
-
-  const [selectedThumbs, setSelectedThumbs] = useState<number[]>([]);
+  const navigate = useNavigate();
 
   const handleThumbClick = (thumbId: number) => {
-    const isThumbSelected = selectedThumbs.includes(thumbId);
+    const isThumbSelected = selectedThumbIds.includes(thumbId);
 
     if (isThumbSelected) {
-      setSelectedThumbs(selectedThumbs.filter((id) => id !== thumbId));
+      setSelectedThumbIds(selectedThumbIds.filter((id) => id !== thumbId));
+      setUnselectedThumbIds([...unselectedThumbIds, thumbId]);
     } else {
-      setSelectedThumbs([...selectedThumbs, thumbId]);
+      setSelectedThumbIds([...selectedThumbIds, thumbId]);
+      setUnselectedThumbIds(unselectedThumbIds.filter((id) => id !== thumbId));
     }
   };
 
@@ -34,24 +40,27 @@ const ThumbSelector = () => {
     e.preventDefault();
 
     try {
-      await axios.post('/thumb/select', {
-        thumbs: selectedThumbs,
-        userData,
-      });
+      if (selectedThumbIds.length !== 0) {
+        navigate('/recommendation');
+        await axios.post('/user/select', {
+          selectedThumbIds: selectedThumbIds,
+          unselectedThumbIds: unselectedThumbIds,
+        });
+      }
     } catch (error) {}
   };
 
   return (
     <section className="thumb-selector">
-      <h1>이미지 3개를 선택하세요</h1>
+      <h1>이미지를 선택하세요</h1>
       <form onSubmit={postThumb}>
         <div className="thumb-list">
-          {thumbData.map((thumb) => (
+          {thumbsData.map((thumb) => (
             <label key={thumb.id} className="thumb-item">
               <input
                 type="checkbox"
                 onChange={() => handleThumbClick(thumb.id)}
-                checked={selectedThumbs.includes(thumb.id)}
+                checked={selectedThumbIds.includes(thumb.id)}
               />
               <img
                 src={`/thumbnails/${thumb.video_id}.jpg`}

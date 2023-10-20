@@ -1,13 +1,14 @@
 import React from 'react';
-import { Outlet, useOutletContext } from 'react-router-dom';
-import User from '../types/user';
+import { useLoaderData } from 'react-router-dom';
+import ThumbSelector from '../components/ThumbSelector';
+import Thumb from '../types/thumb';
 
 const Root = () => {
-  const userData = useOutletContext() as User;
+  const thumbsData = useLoaderData() as Thumb[];
 
   return (
     <>
-      <Outlet context={userData} />
+      <ThumbSelector thumbsData={thumbsData} />
     </>
   );
 };

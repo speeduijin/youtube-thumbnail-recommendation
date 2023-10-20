@@ -1,10 +1,11 @@
-import axios from 'axios';
 import React, { ChangeEvent, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Login() {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -20,7 +21,7 @@ function Login() {
         email: loginData.email,
         password: loginData.password,
       });
-      setIsLoggedIn(true);
+      navigate('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message: string = error.response?.data.message;
@@ -28,8 +29,6 @@ function Login() {
       }
     }
   };
-
-  if (isLoggedIn) return <Navigate to="/" />;
 
   return (
     <div className="login-wrapper">

@@ -1,7 +1,7 @@
 .thumb-selector {
   h1 {
-    font-size: 24px;
     margin-bottom: 16px;
+    font-size: 24px;
   }
 
   .thumb-list {
@@ -13,9 +13,9 @@
 
   .thumb-item {
     position: relative;
+    width: calc(50% - 5px);
     cursor: pointer;
     border: 2px solid #ddd;
-    width: calc(50% - 5px);
     transition: border-color 0.3s;
 
     img {
@@ -37,12 +37,12 @@
   }
 
   button {
-    margin-top: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
     padding: 10px 20px;
+    margin-top: 16px;
+    color: #fff;
     cursor: pointer;
+    background-color: #007bff;
+    border: none;
     border-radius: 4px;
     transition: background-color 0.3s;
 

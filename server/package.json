@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "./dist/server.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=80 pm2 start ./dist/index.js",
+    "start": "cross-env NODE_ENV=production PORT=80 pm2 start ./dist/server.js",
     "build": "tsc",
     "dev": "nodemon --exec ts-node --files ./src/server.ts"
   },

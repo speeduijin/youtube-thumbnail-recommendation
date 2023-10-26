@@ -23,10 +23,7 @@ const config: Configuration = {
 
   output: {
     filename: 'main.[chunkhash].js',
-    path: path.resolve(
-      __dirname,
-      '../youtube-thumbnail-recommendation/server/client',
-    ),
+    path: path.resolve(__dirname, '../server/client'),
     pathinfo: isDevelopment,
     clean: true,
   },

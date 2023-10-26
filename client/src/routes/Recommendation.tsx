@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLoaderData, useOutletContext } from 'react-router-dom';
+import React from 'react';
+import { Link, useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 
 export const recommendationLoader = async () => {
@@ -30,6 +30,7 @@ function Recommendation() {
           </li>
         ))}
       </ul>
+      <Link to="/">{'home'}</Link>
     </div>
   );
 }

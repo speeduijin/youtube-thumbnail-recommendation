@@ -64,9 +64,9 @@ function Login() {
         </button>
       </form>
 
-      <div className="join-link">
+      {/* <div className="join-link">
         <Link to="/join">회원가입</Link>
-      </div>
+      </div> */}
     </div>
   );
 }

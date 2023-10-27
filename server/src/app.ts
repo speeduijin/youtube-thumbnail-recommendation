@@ -33,8 +33,8 @@ if (isProduction) {
   app.enable('trust proxy');
   app.use(
     helmet({
-      // contentSecurityPolicy: false,
-      // crossOriginResourcePolicy: false,
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: false,
     }),
   );
 }
